@@ -3,6 +3,7 @@ import path from 'path';
 import { networkInterfaces } from 'os';
 import dotenv from 'dotenv';
 import chalk from 'chalk';
+// import execa from 'execa';
 
 export const isFunction = (arg: unknown): arg is (...args: any[]) => any =>
   typeof arg === 'function';
@@ -69,6 +70,12 @@ export function isProdFn(): boolean {
 export function isReportMode(): boolean {
   return process.env.REPORT === 'true';
 }
+export function isBuildGzip(): boolean {
+  return process.env.VITE_BUILD_GZIP === 'true';
+}
+export function isSiteMode(): boolean {
+  return process.env.SITE === 'true';
+}
 
 export interface ViteEnv {
   VITE_PORT: number;
@@ -77,6 +84,8 @@ export interface ViteEnv {
   VITE_PROXY: [string, string][];
   VITE_GLOB_APP_TITLE: string;
   VITE_USE_CDN: boolean;
+  VITE_DROP_CONSOLE: boolean;
+  VITE_BUILD_GZIP: boolean;
 }
 
 export function loadEnv(): ViteEnv {
@@ -124,30 +133,29 @@ export function getEnvConfig(match = 'VITE_GLOB_', confFiles = ['.env', '.env.pr
   return envConfig;
 }
 
-export function successConsole(message: any) {
+function consoleFn(color: string, message: any) {
   console.log(
     chalk.blue.bold('****************  ') +
-      chalk.green.bold('✨ ' + message) +
+      (chalk as any)[color].bold(message) +
       chalk.blue.bold('  ****************')
   );
+}
+
+export function successConsole(message: any) {
+  consoleFn('green', '✨ ' + message);
 }
 
 export function errorConsole(message: any) {
-  console.log(
-    chalk.blue.bold('****************  ') +
-      chalk.red.bold('✨ ' + message) +
-      chalk.blue.bold('  ****************')
-  );
+  consoleFn('red', '✨ ' + message);
 }
 
 export function warnConsole(message: any) {
-  console.log(
-    chalk.blue.bold('****************  ') +
-      chalk.yellow.bold('✨ ' + message) +
-      chalk.blue.bold('  ****************')
-  );
+  consoleFn('yellow', '✨ ' + message);
 }
 
 export function getCwdPath(...dir: string[]) {
   return path.resolve(process.cwd(), ...dir);
 }
+
+// export const run = (bin: string, args: any, opts = {}) =>
+//   execa(bin, args, { stdio: 'inherit', ...opts });

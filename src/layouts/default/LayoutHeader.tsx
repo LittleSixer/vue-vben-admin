@@ -1,5 +1,5 @@
-import { defineComponent, unref, computed } from 'vue';
-import { Layout, Tooltip } from 'ant-design-vue';
+import { defineComponent, unref, computed, ref } from 'vue';
+import { Layout, Tooltip, Badge } from 'ant-design-vue';
 import Logo from '/@/layouts/Logo.vue';
 import UserDropdown from './UserDropdown';
 import LayoutMenu from './LayoutMenu';
@@ -12,22 +12,53 @@ import {
   FullscreenOutlined,
   GithubFilled,
   LockOutlined,
+  BugOutlined,
 } from '@ant-design/icons-vue';
 import { useFullscreen } from '/@/hooks/web/useFullScreen';
 import { useTabs } from '/@/hooks/web/useTabs';
 import { GITHUB_URL } from '/@/settings/siteSetting';
 import LockAction from './actions/LockActionItem';
 import { useModal } from '/@/components/Modal/index';
+import { errorStore } from '/@/store/modules/error';
+import { useGo } from '/@/hooks/web/usePage';
+import { useWindowSizeFn } from '/@/hooks/event/useWindowSize';
 
 export default defineComponent({
   name: 'DefaultLayoutHeader',
   setup() {
+    const widthRef = ref(200);
     const { refreshPage } = useTabs();
     const [register, { openModal }] = useModal();
     const { toggleFullscreen, isFullscreenRef } = useFullscreen();
+
+    const go = useGo();
     const getProjectConfigRef = computed(() => {
       return appStore.getProjectConfig;
     });
+    const showTopMenu = computed(() => {
+      const getProjectConfig = unref(getProjectConfigRef);
+      const {
+        menuSetting: { mode, split: splitMenu },
+      } = getProjectConfig;
+      return mode === MenuModeEnum.HORIZONTAL || splitMenu;
+    });
+
+    let logoEl: Element | null;
+    useWindowSizeFn(
+      () => {
+        if (!unref(showTopMenu)) return;
+        let width = 0;
+        if (!logoEl) {
+          logoEl = document.querySelector('.layout-header__logo');
+        }
+        if (logoEl) {
+          width += logoEl.clientWidth;
+        }
+        widthRef.value = width + 60;
+      },
+      200,
+      { immediate: true }
+    );
 
     function goToGithub() {
       window.open(GITHUB_URL, '__blank');
@@ -37,6 +68,12 @@ export default defineComponent({
       const theme = unref(getProjectConfigRef).headerSetting.theme;
       return theme ? `layout-header__header--${theme}` : '';
     });
+
+    function handleToErrorList() {
+      errorStore.commitErrorListCountState(0);
+      go('/exception/error-log');
+    }
+
     /**
      * @description: 锁定屏幕
      */
@@ -46,14 +83,15 @@ export default defineComponent({
     return () => {
       const getProjectConfig = unref(getProjectConfigRef);
       const {
-        // useErrorHandle,
+        useErrorHandle,
         showLogo,
-        headerSetting: { theme: headerTheme, showRedo, showGithub, showFullScreen },
+        headerSetting: { theme: headerTheme, useLockPage, showRedo, showGithub, showFullScreen },
         menuSetting: { mode, type: menuType, split: splitMenu, topMenuAlign },
         showBreadCrumb,
       } = getProjectConfig;
 
       const isSidebarType = menuType === MenuTypeEnum.SIDEBAR;
+      const width = unref(widthRef);
       return (
         <Layout.Header class={['layout-header', 'flex p-0 px-4 ', unref(headerClass)]}>
           {() => (
@@ -64,8 +102,11 @@ export default defineComponent({
                 {mode !== MenuModeEnum.HORIZONTAL && showBreadCrumb && !splitMenu && (
                   <LayoutBreadcrumb />
                 )}
-                {(mode === MenuModeEnum.HORIZONTAL || splitMenu) && (
-                  <div class={[`layout-header__menu `, `justify-${topMenuAlign}`]}>
+                {unref(showTopMenu) && (
+                  <div
+                    class={[`layout-header__menu `, `justify-${topMenuAlign}`]}
+                    style={{ width: `calc(100% - ${unref(width)}px)` }}
+                  >
                     <LayoutMenu
                       theme={headerTheme}
                       splitType={splitMenu ? MenuSplitTyeEnum.TOP : MenuSplitTyeEnum.NONE}
@@ -77,8 +118,28 @@ export default defineComponent({
               </div>
 
               <div class={`layout-header__action`}>
+                {useErrorHandle && (
+                  <Tooltip>
+                    {{
+                      title: () => '错误日志',
+                      default: () => (
+                        <Badge
+                          count={errorStore.getErrorListCountState}
+                          offset={[0, 10]}
+                          overflowCount={99}
+                        >
+                          {() => (
+                            <div class={`layout-header__action-item`} onClick={handleToErrorList}>
+                              <BugOutlined class={`layout-header__action-icon`} />
+                            </div>
+                          )}
+                        </Badge>
+                      ),
+                    }}
+                  </Tooltip>
+                )}
+
                 {showGithub && (
-                  // @ts-ignore
                   <Tooltip>
                     {{
                       title: () => 'github',
@@ -90,8 +151,7 @@ export default defineComponent({
                     }}
                   </Tooltip>
                 )}
-                {showGithub && (
-                  // @ts-ignore
+                {useLockPage && (
                   <Tooltip>
                     {{
                       title: () => '锁定屏幕',
@@ -104,7 +164,6 @@ export default defineComponent({
                   </Tooltip>
                 )}
                 {showRedo && (
-                  // @ts-ignore
                   <Tooltip>
                     {{
                       title: () => '刷新',
@@ -117,7 +176,6 @@ export default defineComponent({
                   </Tooltip>
                 )}
                 {showFullScreen && (
-                  // @ts-ignore
                   <Tooltip>
                     {{
                       title: () => (unref(isFullscreenRef) ? '退出全屏' : '全屏'),

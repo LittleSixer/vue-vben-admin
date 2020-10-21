@@ -12,11 +12,13 @@
   import zhCN from 'ant-design-vue/es/locale/zh_CN';
   import moment from 'moment';
   import 'moment/locale/zh-cn';
-  import axios from 'axios';
 
   import { useConfigProvider, useInitAppConfigStore, useListenerNetWork } from './useApp';
   import { useLockPage } from '/@/hooks/web/useLockPage';
+  import { useSetting } from '/@/hooks/core/useSetting';
+
   moment.locale('zh-cn');
+
   export default defineComponent({
     name: 'App',
     components: { ConfigProvider },
@@ -24,9 +26,15 @@
       useInitAppConfigStore();
       useListenerNetWork();
       createBreakpointListen();
+      const { projectSetting } = useSetting();
       const { transformCellText } = useConfigProvider();
-      const { on: lockOn } = useLockPage();
-      axios.get('/api/users?page=2');
+
+      let lockOn = {};
+      if (projectSetting.lockTime) {
+        const { on } = useLockPage();
+        lockOn = on;
+      }
+
       return {
         transformCellText,
         zhCN,

@@ -6,11 +6,11 @@ import { errorConsole, successConsole } from '../utils';
 export const runChangeLog = async () => {
   try {
     let cmd = `conventional-changelog -p custom-config -i CHANGELOG.md -s -r 0 `;
+
     await sh(cmd, {
       async: true,
       nopipe: true,
     });
-
     await sh('prettier --write **/CHANGELOG.md ', {
       async: true,
       nopipe: true,

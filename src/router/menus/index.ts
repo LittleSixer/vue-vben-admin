@@ -1,4 +1,4 @@
-import type { Menu } from '/@/router/types';
+import type { Menu, MenuModule } from '/@/router/types';
 import type { RouteRecordNormalized } from 'vue-router';
 import { appStore } from '/@/store/modules/app';
 import { permissionStore } from '/@/store/modules/permission';
@@ -6,34 +6,40 @@ import { transformMenuModule, flatMenus, getAllParentPath } from '/@/utils/helpe
 import { filter } from '/@/utils/helper/treeHelper';
 import router from '/@/router';
 import { PermissionModeEnum } from '/@/enums/appEnum';
+import { pathToRegexp } from 'path-to-regexp';
+import modules from 'globby!/@/router/menus/modules/**/*.@(ts)';
 
 // ===========================
 // ==========module import====
 // ===========================
-import dashboard from './modules/dashboard';
+// import dashboard from './modules/dashboard';
 
-import exceptionDemo from './modules/demo/exception';
-import iframeDemo from './modules/demo/iframe';
-import compDemo from './modules/demo/comp';
-import permissionDemo from './modules/demo/permission';
-import featDemo from './modules/demo/feat';
-import chartsDemo from './modules/demo/charts';
-import tableDemo from './modules/demo/table';
-import formDemo from './modules/demo/form';
-import treeDemo from './modules/demo/tree';
+// import exceptionDemo from './modules/demo/exception';
+// import iframeDemo from './modules/demo/iframe';
+// import compDemo from './modules/demo/comp';
+// import permissionDemo from './modules/demo/permission';
+// import featDemo from './modules/demo/feat';
+// import chartsDemo from './modules/demo/charts';
+// import tableDemo from './modules/demo/table';
+// import formDemo from './modules/demo/form';
+// import treeDemo from './modules/demo/tree';
 
-const menuModules = [
-  dashboard,
-  featDemo,
-  exceptionDemo,
-  iframeDemo,
-  compDemo,
-  permissionDemo,
-  chartsDemo,
-  tableDemo,
-  formDemo,
-  treeDemo,
+const menuModules: MenuModule[] = [
+  // dashboard,
+  // featDemo,
+  // exceptionDemo,
+  // iframeDemo,
+  // compDemo,
+  // permissionDemo,
+  // chartsDemo,
+  // tableDemo,
+  // formDemo,
+  // treeDemo,
 ];
+
+Object.keys(modules).forEach((key) => {
+  menuModules.push(modules[key]);
+});
 
 // ===========================
 // ==========Helper===========
@@ -106,7 +112,13 @@ export async function getFlatChildrenMenus(children: Menu[]) {
 // 通用过滤方法
 function basicFilter(routes: RouteRecordNormalized[]) {
   return (menu: Menu) => {
-    const matchRoute = routes.find((route) => route.path === menu.path);
+    const matchRoute = routes.find((route) => {
+      if (route.meta && route.meta.carryParam) {
+        return pathToRegexp(route.path).test(menu.path);
+      }
+      return route.path === menu.path;
+    });
+
     if (!matchRoute) return false;
     menu.icon = menu.icon || matchRoute.meta.icon;
     menu.meta = matchRoute.meta;

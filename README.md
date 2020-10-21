@@ -5,12 +5,13 @@
 </p>
 <h2 align="center">VUE VBEN ADMIN2.0</h2>
 
-**中文** | [English](./README-ES.md)
+**中文** | [English](./README.en-US.md)
 
 [更新日志](CHANGELOG.md)
 
 - [介绍](#介绍)
 - [gitHub 地址](#github-地址)
+  - [精简版地址](#精简版地址)
 - [预览地址](#预览地址)
 - [文档](#文档)
 - [预安装](#预安装)
@@ -29,13 +30,10 @@
 - [代码贡献](#代码贡献)
 - [已完成功能](#已完成功能)
 - [正在开发的功能](#正在开发的功能)
+- [浏览器支持](#浏览器支持)
 - [加入我们](#加入我们)
 
 ## 介绍
-
-该分支为 2.0 新分支，使用 vue3 进行开发。
-
-1.0 分支请切换到`master`分支。1.0 采用`vue2.6`+`vue-composition-api`+`vue-cli`开发
 
 项目基于`ant-design-vue`,`typescript`,`vue3.0`,`vite`,`tsx`实现的 vue3 风格的后台管理系统，
 
@@ -43,9 +41,15 @@
 
 [vue-vben-admin2.0](https://github.com/anncwb/vue-vben-admin) - `main` 分支
 
+### 精简版地址
+
+[vue-vben-admin-thin-next](https://github.com/anncwb/vben-admin-thin-next)
+
 ## 预览地址
 
-[2.0 在线预览](https://vvbin.cn/next/)
+- [2.0 在线预览](https://vvbin.cn/next/)
+
+- [2.0 精简版 在线预览](https://vvbin.cn/thin/next/)
 
 测试账号: vben/123456
 
@@ -57,7 +61,7 @@
 
 ## 文档
 
-2.0 文档还没开始写。后续补上。
+[文档地址,持续更新中。。，](https://vvbin.cn/doc-next/)
 
 ## 预安装
 
@@ -85,7 +89,6 @@
 - [vite-plugin-mock](https://github.com/anncwb/vite-plugin-mock) - 基于 vite 的 mock 插件.
 - [vue-i18n](https://github.com/intlify/vue-i18n-next) - 国际化
 - [lodash-es](https://github.com/lodash/lodash) - JavaScript 实用程序库
-- [moment](https://github.com/moment/moment) - 时间操作库
 - [axios](https://github.com/axios/axios) - Http 数据交互
 - [TypeScript](https://www.typescriptlang.org/)
 
@@ -219,20 +222,32 @@ yarn clean:lib # 删除node_modules，兼容window系统
 - [x] 数字动画
 - [x] 首屏加载等待动画
 - [x] 抽取生产环境配置文件
+- [x] 打包 Gzip
+- [x] 数据导入导出
+- [x] 系统性能优化
+- [x] 全局错误处理
 
 ## 正在开发的功能
 
 - [ ] 上传组件
 - [ ] 富文本组件
-- [ ] 数据导入导出
-- [ ] 全局错误处理
 - [ ] 主题配置
 - [ ] 黑暗主题
-- [ ] 打包 Gzip
 - [ ] 打包 CDN
-- [ ] 系统性能优化
 
 更多组件/功能/建议/bug/欢迎提交 pr 或者 issue
+
+## 浏览器支持
+
+本地开发推荐使用`Chrome`浏览器,在火狐浏览器进行开发相对卡顿。
+
+支持现代浏览器, IE 暂不支持，后续考虑支持 ie11
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
+| :-: | :-: | :-: | :-: | :-: |
+| not support | last 2 versions | last 2 versions | last 2 versions | last 2 versions |
+
+更多浏览器可以查看 [Can I Use Es Module](https://caniuse.com/?search=ES%20Module)
 
 ## 加入我们
 

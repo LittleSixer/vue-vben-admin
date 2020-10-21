@@ -2,6 +2,7 @@
 
 const { sh } = require('tasksfile');
 const { argv } = require('yargs');
+// const execa = require('execa');
 
 let command = ``;
 
@@ -24,8 +25,23 @@ if (taskList.includes('build') || taskList.includes('report') || taskList.includ
 }
 
 if (taskList && Array.isArray(taskList) && taskList.length) {
+  // execa(
+  //   'cross-env',
+  //   [
+  //     `NODE_ENV=${NODE_ENV}`,
+  //     'ts-node',
+  //     '--project',
+  //     './build/tsconfig.json',
+  //     './build/script/cli.ts',
+  //     taskList.join(' '),
+  //     command,
+  //   ],
+  //   {
+  //     stdio: 'inherit',
+  //   }
+  // );
   sh(
-    `cross-env NODE_ENV=${NODE_ENV} ts-node --project  ./build/tsconfig.json ./build/script/cli.ts ${taskList.join(
+    `cross-env NODE_ENV=${NODE_ENV} ts-node --files -P  ./build/tsconfig.json ./build/script/cli.ts ${taskList.join(
       ' '
     )} ${command}`,
     {

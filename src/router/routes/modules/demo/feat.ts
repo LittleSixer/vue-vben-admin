@@ -10,7 +10,7 @@ export default {
     redirect: '/feat/icon',
     meta: {
       icon: 'ic:outline-featured-play-list',
-      title: 'Feat',
+      title: '页面功能',
     },
   },
 
@@ -94,6 +94,15 @@ export default {
       component: () => import('/@/views/demo/feat/full-screen/index.vue'),
       meta: {
         title: '全屏',
+      },
+    },
+    {
+      path: '/testTab/:id',
+      name: 'TestTab',
+      component: () => import('/@/views/demo/feat/tab-params/index.vue'),
+      meta: {
+        title: 'Tab带参',
+        carryParam: true,
       },
     },
   ],

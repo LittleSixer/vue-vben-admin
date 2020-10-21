@@ -1,6 +1,6 @@
 <template>
   <div @click="openDrawer" class="setting-button">
-    <SettingOutlined :spin="true" />
+    <SettingOutlined />
     <SettingDrawer @register="register" />
   </div>
 </template>
@@ -30,7 +30,7 @@
     position: absolute;
     z-index: 10;
     display: flex;
-    padding: 10px;
+    // padding: 10px;
     color: @white;
     cursor: pointer;
     background: @primary-color;

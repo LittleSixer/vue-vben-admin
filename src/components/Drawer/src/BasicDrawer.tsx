@@ -6,12 +6,12 @@ import {
   watchEffect,
   watch,
   unref,
-  getCurrentInstance,
+  // getCurrentInstance,
   nextTick,
   toRaw,
 } from 'vue';
 import { BasicTitle } from '/@/components/Basic';
-import { ScrollContainer, ScrollContainerOptions } from '/@/components/Container/index';
+// import { ScrollContainer, ScrollContainerOptions } from '/@/components/Container/index';
 import { FullLoading } from '/@/components/Loading/index';
 
 import { getSlot } from '/@/utils/helper/tsxHelper';
@@ -33,18 +33,7 @@ export default defineComponent({
   props: basicProps,
   emits: ['visible-change', 'ok', 'close', 'register'],
   setup(props, { slots, emit, attrs }) {
-    // const { currentRoute } = useRouter();
     const scrollRef = ref<any>(null);
-    /**
-     * @description: 获取配置ScrollContainer
-     */
-    const getScrollOptions = computed(
-      (): ScrollContainerOptions => {
-        return {
-          ...(props.scrollOptions as any),
-        };
-      }
-    );
 
     const visibleRef = ref(false);
     const propsRef = ref<Partial<DrawerProps> | null>(null);
@@ -85,7 +74,6 @@ export default defineComponent({
     watch(
       () => visibleRef.value,
       (visible) => {
-        // appStore.commitLockMainScrollState(visible);
         nextTick(() => {
           emit('visible-change', visible);
         });
@@ -95,33 +83,6 @@ export default defineComponent({
       }
     );
 
-    // watch(
-    //   () => currentRoute.value.path,
-    //   () => {
-    //     if (unref(visibleRef)) {
-    //       visibleRef.value = false;
-    //     }
-    //   }
-    // );
-    function scrollBottom() {
-      const scroll = unref(scrollRef);
-      if (scroll) {
-        scroll.scrollBottom();
-      }
-    }
-    function scrollTo(to: number) {
-      const scroll = unref(scrollRef);
-      if (scroll) {
-        scroll.scrollTo(to);
-      }
-    }
-    function getScrollWrap() {
-      const scroll = unref(scrollRef);
-      if (scroll) {
-        return scroll.getScrollWrap();
-      }
-      return null;
-    }
     // 取消事件
     async function onClose(e: any) {
       const { closeFunc } = unref(getProps);
@@ -225,12 +186,6 @@ export default defineComponent({
       );
     }
 
-    const currentInstance = getCurrentInstance() as any;
-    if (getCurrentInstance()) {
-      currentInstance.scrollBottom = scrollBottom;
-      currentInstance.scrollTo = scrollTo;
-      currentInstance.getScrollWrap = getScrollWrap;
-    }
     const drawerInstance: DrawerInstance = {
       setDrawerProps: setDrawerProps,
     };
@@ -259,15 +214,18 @@ export default defineComponent({
                   class={[!unref(getProps).loading ? 'hidden' : '']}
                   tip="加载中..."
                 />
-                <ScrollContainer
+                <div
                   ref={scrollRef}
-                  {...{ ...attrs, ...unref(getScrollOptions) }}
+                  {...attrs}
                   style={{
-                    height: `calc(100% - ${footerHeight})`,
+                    height: `calc(100% - ${footerHeight}px)`,
+                    overflow: 'auto',
+                    padding: '16px',
+                    paddingBottom: '30px',
                   }}
                 >
-                  {() => getSlot(slots, 'default')}
-                </ScrollContainer>
+                  {getSlot(slots, 'default')}
+                </div>
                 {renderFooter()}
               </>
             ),
